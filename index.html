@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>いちねんせいのかんじクイズ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Zen Maru Gothic"', 'sans-serif'],
+                    },
+                    colors: {
+                        'kids-blue': '#4FD1C5',
+                        'kids-yellow': '#F6E05E',
+                        'kids-orange': '#F6AD55',
+                        'kids-pink': '#F687B3',
+                        'kids-green': '#68D391',
+                        'kids-bg': '#F0FDF4',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F0FDF4;
+            /* Cute pattern background */
+            background-image: radial-gradient(#68D391 2px, transparent 2px);
+            background-size: 30px 30px;
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
+  }
+}
+</script>
+</head>
+<body>
+    <div id="root"></div>
+</body>
+</html>
