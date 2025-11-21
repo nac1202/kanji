@@ -58,43 +58,29 @@ class AudioService {
     this.playTone(600, 'sine', 0.1);
   }
 
-  // "Pin-Pon!" - Cheerful major 3rd
+  // "Pin-Pon!"
   playCorrect() {
-    const now = 0;
-    this.playTone(660, 'sine', 0.15, now, 0.8); // E5
-    this.playTone(880, 'sine', 0.4, now + 0.1, 0.8); // A5 (Wait, let's do C-E-G or similar)
-    // Let's do a classic quiz show "Pin-Pon" (High C -> Higher C)
-    // B4 (493) -> G5 (783) is common, lets try:
-    // C5 (523) -> C6 (1046)
-    // Actually simpler:
     this.playTone(1046.50, 'sine', 0.1, 0, 0.6); // High C
     this.playTone(880.00, 'sine', 0.4, 0.1, 0.6); // A
   }
 
-  // "Buu-Buu..." - Descending low tone
+  // "Buu-Buu..."
   playIncorrect() {
     const ctx = this.getContext();
     if (this.isMuted) return;
     
-    // Using sawtooth for a buzzier "wrong" sound
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
-    
     osc.type = 'sawtooth';
-    // Slide down
     osc.frequency.setValueAtTime(200, ctx.currentTime);
     osc.frequency.linearRampToValueAtTime(100, ctx.currentTime + 0.4);
-    
     gain.gain.setValueAtTime(0.3, ctx.currentTime);
     gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-
     osc.connect(gain);
     gain.connect(this.masterGain!);
-    
     osc.start();
     osc.stop(ctx.currentTime + 0.4);
     
-    // Second beep
     const osc2 = ctx.createOscillator();
     const gain2 = ctx.createGain();
     osc2.type = 'sawtooth';
@@ -102,17 +88,15 @@ class AudioService {
     osc2.frequency.linearRampToValueAtTime(100, ctx.currentTime + 0.6);
     gain2.gain.setValueAtTime(0.3, ctx.currentTime + 0.2);
     gain2.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.6);
-    
     osc2.connect(gain2);
     gain2.connect(this.masterGain!);
     osc2.start(ctx.currentTime + 0.2);
     osc2.stop(ctx.currentTime + 0.6);
   }
 
-  // Game Start / Level Up Sound
+  // Game Start
   playStart() {
     const now = 0;
-    // C - E - G - C (Arpeggio)
     this.playTone(523.25, 'triangle', 0.1, now);
     this.playTone(659.25, 'triangle', 0.1, now + 0.1);
     this.playTone(783.99, 'triangle', 0.1, now + 0.2);
@@ -122,12 +106,23 @@ class AudioService {
   // Victory Fanfare
   playFanfare() {
     const now = 0;
-    // Ta-da-da-ta-daaaa!
-    this.playTone(523.25, 'triangle', 0.1, now); // C
-    this.playTone(523.25, 'triangle', 0.1, now + 0.15); // C
-    this.playTone(523.25, 'triangle', 0.1, now + 0.3); // C
-    this.playTone(659.25, 'triangle', 0.4, now + 0.45); // E
-    this.playTone(783.99, 'triangle', 0.6, now + 0.6); // G
+    this.playTone(523.25, 'triangle', 0.1, now); 
+    this.playTone(523.25, 'triangle', 0.1, now + 0.15); 
+    this.playTone(523.25, 'triangle', 0.1, now + 0.3); 
+    this.playTone(659.25, 'triangle', 0.4, now + 0.45); 
+    this.playTone(783.99, 'triangle', 0.6, now + 0.6); 
+  }
+
+  // Level Up / Evolution Sound (Magical rising)
+  playEvolution() {
+    const ctx = this.getContext();
+    if (this.isMuted) return;
+
+    const now = ctx.currentTime;
+    // Arpeggio up quickly
+    [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98].forEach((freq, i) => {
+        this.playTone(freq, 'sine', 0.2, i * 0.08, 0.5);
+    });
   }
 }
 

@@ -1,9 +1,9 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { GRADE_1_KANJI, API_KEY } from "../constants";
+import { GRADE_1_KANJI } from "../constants";
 import { QuizQuestion } from "../types";
 
 // Initialize Gemini Client
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const SYSTEM_INSTRUCTION = `
 あなたは日本の小学校1年生の先生です。
