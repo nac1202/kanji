@@ -28,6 +28,13 @@ class AudioService {
     }
   }
 
+  public setMute(muted: boolean) {
+    this.isMuted = muted;
+    if (this.ctx && this.masterGain) {
+        this.masterGain.gain.setValueAtTime(muted ? 0 : 0.3, this.ctx.currentTime);
+    }
+  }
+
   private playTone(
     freq: number, 
     type: OscillatorType, 

@@ -26,6 +26,7 @@ const App: React.FC = () => {
   const [saveData, setSaveData] = useState<SaveData>(storageService.load());
   const [currentMonster, setCurrentMonster] = useState<Monster | null>(null);
   const [expGainedInSession, setExpGainedInSession] = useState(0);
+  const [isMuted, setIsMuted] = useState(false);
 
   // Initial Load & Monster Sync
   useEffect(() => {
@@ -46,6 +47,12 @@ const App: React.FC = () => {
     }
   }, [saveData]);
 
+  const toggleMute = () => {
+      const newState = !isMuted;
+      setIsMuted(newState);
+      audio.setMute(newState);
+  };
+
   const startGame = useCallback(() => {
     audio.init();
     audio.playStart();
@@ -64,6 +71,7 @@ const App: React.FC = () => {
   }, [saveData.currentMonsterId]);
 
   const selectMonster = (monsterId: string) => {
+    audio.init();
     audio.playCorrect(); // Confirmation sound
     
     // If this is a first-time selection (unlocking), start them at Stage 1 (Child) instead of Stage 0 (Egg)
@@ -97,6 +105,19 @@ const App: React.FC = () => {
     }
   };
 
+  const resetGameData = () => {
+      if (window.confirm("ほんとうに データを けしますか？\n（そだてた モンスターと おわかれします）")) {
+          const emptyData: SaveData = {
+              currentMonsterId: null,
+              monsterExps: {},
+              unlockedMonsters: []
+          };
+          setSaveData(emptyData);
+          setCurrentMonster(null);
+          setGameState(GameState.START_SCREEN);
+      }
+  };
+
   const loadNextQuestion = async (currentUsed: string[]) => {
     setGameState(GameState.LOADING_QUESTION);
     try {
@@ -111,6 +132,7 @@ const App: React.FC = () => {
   };
 
   const handleAnswer = (selected: string) => {
+    audio.init();
     if (!currentQuestion) return;
     
     const isCorrect = selected === currentQuestion.correctReading;
@@ -186,7 +208,12 @@ const App: React.FC = () => {
   // 2. Monster Select Screen (First time or switching)
   if (gameState === GameState.MONSTER_SELECT) {
     return (
-        <div className="min-h-screen bg-kids-bg p-4 flex flex-col items-center">
+        <div className="min-h-screen bg-kids-bg p-4 flex flex-col items-center relative">
+            {/* Mute Button */}
+            <button onClick={toggleMute} className="absolute top-4 right-4 text-2xl z-50 p-2 bg-white/50 rounded-full">
+                {isMuted ? '🔇' : '🔊'}
+            </button>
+            
             <h2 className="text-3xl font-black text-kids-blue mb-4 text-center">
                 パートナーをえらんでね！
             </h2>
@@ -210,13 +237,23 @@ const App: React.FC = () => {
 
   // 3. Zukan Screen
   if (gameState === GameState.ZUKAN) {
-      return <Zukan saveData={saveData} onClose={() => setGameState(GameState.START_SCREEN)} onSelect={selectMonster} />;
+      return <Zukan 
+                saveData={saveData} 
+                onClose={() => setGameState(GameState.START_SCREEN)} 
+                onSelect={selectMonster} 
+                onReset={resetGameData}
+             />;
   }
 
   // 4. Start Screen
   if (gameState === GameState.START_SCREEN) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden bg-kids-bg">
+        {/* Mute Button */}
+        <button onClick={toggleMute} className="absolute top-4 right-4 text-2xl z-50 p-2 bg-white/50 rounded-full">
+            {isMuted ? '🔇' : '🔊'}
+        </button>
+
         {/* Decorative elements */}
         <div className="absolute top-10 left-10 w-32 h-32 bg-kids-yellow rounded-full opacity-50 blur-2xl"></div>
         <div className="absolute bottom-10 right-10 w-40 h-40 bg-kids-pink rounded-full opacity-50 blur-2xl"></div>
@@ -230,7 +267,7 @@ const App: React.FC = () => {
           </div>
 
           {currentMonster && (
-              <div className="mb-8 cursor-pointer" onClick={() => setGameState(GameState.ZUKAN)}>
+              <div className="mb-8 cursor-pointer" onClick={() => { audio.init(); setGameState(GameState.ZUKAN); }}>
                   <p className="text-sm font-bold text-gray-400 mb-2">キミのパートナー</p>
                   <MonsterDisplay 
                     monster={currentMonster} 
@@ -247,7 +284,7 @@ const App: React.FC = () => {
             スタート！
           </Button>
 
-          <Button onClick={() => setGameState(GameState.ZUKAN)} size="md" color="yellow" className="w-full">
+          <Button onClick={() => { audio.init(); setGameState(GameState.ZUKAN); }} size="md" color="yellow" className="w-full">
              モンスターずかん
           </Button>
         </div>
@@ -308,9 +345,14 @@ const App: React.FC = () => {
 
   // 7. Playing Screen
   return (
-    <div className="min-h-screen flex flex-col items-center pt-4 pb-4 px-4 max-w-2xl mx-auto bg-kids-bg">
+    <div className="min-h-screen flex flex-col items-center pt-4 pb-4 px-4 max-w-2xl mx-auto bg-kids-bg relative">
+      {/* Mute Button */}
+      <button onClick={toggleMute} className="absolute top-4 right-4 text-2xl z-50 p-2 bg-white/50 rounded-full">
+          {isMuted ? '🔇' : '🔊'}
+      </button>
+
       {/* Header */}
-      <div className="w-full flex justify-between items-center mb-4">
+      <div className="w-full flex justify-between items-center mb-4 mt-8">
         <div className="text-xl font-bold text-gray-500">
           もんだい {questionCount + 1} / {TOTAL_QUESTIONS}
         </div>

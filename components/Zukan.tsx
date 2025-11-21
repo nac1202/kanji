@@ -8,9 +8,10 @@ interface ZukanProps {
   saveData: SaveData;
   onClose: () => void;
   onSelect: (monsterId: string) => void;
+  onReset: () => void;
 }
 
-export const Zukan: React.FC<ZukanProps> = ({ saveData, onClose, onSelect }) => {
+export const Zukan: React.FC<ZukanProps> = ({ saveData, onClose, onSelect, onReset }) => {
   return (
     <div className="fixed inset-0 bg-kids-bg z-50 overflow-y-auto flex flex-col">
       <div className="p-4 bg-white shadow-md sticky top-0 z-10 flex justify-between items-center">
@@ -18,7 +19,7 @@ export const Zukan: React.FC<ZukanProps> = ({ saveData, onClose, onSelect }) => 
         <Button onClick={onClose} size="sm" color="orange">とじる</Button>
       </div>
 
-      <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto w-full pb-20">
+      <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto w-full">
         {MONSTERS.map((monster) => {
           const exp = saveData.monsterExps[monster.id] || 0;
           const unlocked = saveData.unlockedMonsters.includes(monster.id);
@@ -95,6 +96,19 @@ export const Zukan: React.FC<ZukanProps> = ({ saveData, onClose, onSelect }) => 
             </div>
           );
         })}
+      </div>
+
+      {/* Footer / Reset Section */}
+      <div className="p-8 mt-auto text-center border-t-2 border-gray-200 bg-gray-50">
+        <p className="text-sm text-gray-500 font-bold mb-4">
+           ※ データは 自動(じどう)で セーブされています
+        </p>
+        <button 
+          onClick={onReset}
+          className="text-xs text-red-400 hover:text-red-600 font-bold underline bg-transparent border-none cursor-pointer"
+        >
+          データを けして さいしょから あそぶ
+        </button>
       </div>
     </div>
   );
