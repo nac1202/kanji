@@ -1,5 +1,5 @@
 
-import { Monster } from "./types";
+import { Monster, QuizQuestion } from "./types";
 
 // List of 80 Kanji taught in Japanese 1st grade
 export const GRADE_1_KANJI = [
@@ -86,4 +86,78 @@ export const MONSTERS: Monster[] = [
       { name: "ゴーレム", emoji: "🗿", minExp: 120, color: "bg-stone-500" },
     ]
   },
+];
+
+// Fallback questions for offline mode or error handling
+export const FALLBACK_QUESTIONS: QuizQuestion[] = [
+  {
+    originalSentence: "山へ いきます",
+    displaySentence: "[山] へ いきます",
+    targetKanji: "山",
+    correctReading: "やま",
+    options: ["やま", "かわ", "うみ", "そら"],
+  },
+  {
+    originalSentence: "川で あそぶ",
+    displaySentence: "[川] で あそぶ",
+    targetKanji: "川",
+    correctReading: "かわ",
+    options: ["かわ", "やま", "いけ", "みず"],
+  },
+  {
+    originalSentence: "大きな 木",
+    displaySentence: "大きな [木]",
+    targetKanji: "木",
+    correctReading: "き",
+    options: ["き", "は", "め", "ね"],
+  },
+  {
+    originalSentence: "青い 空",
+    displaySentence: "青い [空]",
+    targetKanji: "空",
+    correctReading: "そら",
+    options: ["そら", "うみ", "くも", "あめ"],
+  },
+  {
+    originalSentence: "白い 花",
+    displaySentence: "白い [花]",
+    targetKanji: "花",
+    correctReading: "はな",
+    options: ["はな", "くさ", "えだ", "み"],
+  },
+  {
+    originalSentence: "雨が ふる",
+    displaySentence: "[雨] が ふる",
+    targetKanji: "雨",
+    correctReading: "あめ",
+    options: ["あめ", "ゆき", "かぜ", "くも"],
+  },
+  {
+    originalSentence: "一ねんせい",
+    displaySentence: "[一] ねんせい",
+    targetKanji: "一",
+    correctReading: "いち",
+    options: ["いち", "に", "さん", "じゅう"],
+  },
+  {
+    originalSentence: "学校へ いく",
+    displaySentence: "[学] 校へ いく",
+    targetKanji: "学",
+    correctReading: "がっ",
+    options: ["がっ", "がい", "かく", "ごう"],
+  },
+  {
+    originalSentence: "先生",
+    displaySentence: "[先] 生",
+    targetKanji: "先",
+    correctReading: "せん",
+    options: ["せん", "さき", "まえ", "ちか"],
+  },
+  {
+    originalSentence: "足が はやい",
+    displaySentence: "[足] が はやい",
+    targetKanji: "足",
+    correctReading: "あし",
+    options: ["あし", "て", "くび", "かた"],
+  }
 ];

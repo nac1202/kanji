@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from './components/Button';
 import { ProgressBar } from './components/ProgressBar';
@@ -28,13 +29,6 @@ const App: React.FC = () => {
 
   // Initial Load & Monster Sync
   useEffect(() => {
-    // Note: In Vercel/Vite build, process.env.API_KEY is injected via define.
-    // If it's missing, we show error.
-    if (!process.env.API_KEY) {
-      setGameState(GameState.ERROR);
-      return;
-    }
-
     if (!saveData.currentMonsterId) {
         // Will handle in UI
     } else {
@@ -183,7 +177,7 @@ const App: React.FC = () => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center">
         <h1 className="text-3xl font-bold text-red-500 mb-4">エラーが発生しました</h1>
-        <p className="text-gray-600 mb-6">APIキーをかくにんしてね。</p>
+        <p className="text-gray-600 mb-6">しばらくしてから もういちど あそんでね。</p>
         <Button onClick={() => window.location.reload()} color="orange">再読み込み</Button>
       </div>
     );

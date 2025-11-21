@@ -1,5 +1,6 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
-import { GRADE_1_KANJI } from "../constants";
+import { GRADE_1_KANJI, FALLBACK_QUESTIONS } from "../constants";
 import { QuizQuestion } from "../types";
 
 const SYSTEM_INSTRUCTION = `
@@ -11,8 +12,13 @@ const SYSTEM_INSTRUCTION = `
 export const generateQuizQuestion = async (
   usedKanji: string[] = []
 ): Promise<QuizQuestion> => {
-  // Initialize Gemini Client lazily to prevent startup crash if API key is missing
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const apiKey = process.env.API_KEY;
+
+  // Offline / Demo Mode check
+  if (!apiKey || apiKey === "") {
+    console.log("No API Key found, using offline fallback.");
+    return getOfflineQuestion(usedKanji);
+  }
 
   // Pick a random kanji that hasn't been used recently if possible, otherwise random
   let availableKanji = GRADE_1_KANJI.filter((k) => !usedKanji.includes(k));
@@ -31,6 +37,9 @@ export const generateQuizQuestion = async (
   `;
 
   try {
+    // Move initialization inside the try block to catch any sync errors
+    const ai = new GoogleGenAI({ apiKey });
+    
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: prompt,
@@ -70,14 +79,23 @@ export const generateQuizQuestion = async (
     };
 
   } catch (error) {
-    console.error("Gemini API Error:", error);
-    // Fallback question in case of API failure
-    return {
-      originalSentence: "山へ いきます",
-      displaySentence: "[山] へ いきます",
-      targetKanji: "山",
-      correctReading: "やま",
-      options: ["やま", "かわ", "うみ", "そら"],
-    };
+    console.error("Gemini API Error or Key Missing:", error);
+    return getOfflineQuestion(usedKanji);
   }
 };
+
+const getOfflineQuestion = (usedKanji: string[]): QuizQuestion => {
+    // Try to find a question using a kanji not yet used, otherwise random from fallback
+    const unusedQuestions = FALLBACK_QUESTIONS.filter(q => !usedKanji.includes(q.targetKanji));
+    const pool = unusedQuestions.length > 0 ? unusedQuestions : FALLBACK_QUESTIONS;
+    
+    const randomQ = pool[Math.floor(Math.random() * pool.length)];
+    
+    // Shuffle options for the fallback question so it feels dynamic
+    const shuffledOptions = [...randomQ.options].sort(() => Math.random() - 0.5);
+    
+    return {
+        ...randomQ,
+        options: shuffledOptions
+    };
+}
