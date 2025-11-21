@@ -115,10 +115,8 @@ class AudioService {
 
   // Level Up / Evolution Sound (Magical rising)
   playEvolution() {
-    const ctx = this.getContext();
     if (this.isMuted) return;
 
-    const now = ctx.currentTime;
     // Arpeggio up quickly
     [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98].forEach((freq, i) => {
         this.playTone(freq, 'sine', 0.2, i * 0.08, 0.5);

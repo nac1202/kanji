@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Monster, EvolutionStage } from '../types';
+import { Monster } from '../types';
 
 interface MonsterDisplayProps {
   monster: Monster;
@@ -22,10 +22,6 @@ export const MonsterDisplay: React.FC<MonsterDisplayProps> = ({
   // Determine current stage based on EXP
   const currentStage = [...monster.stages].reverse().find(s => exp >= s.minExp) || monster.stages[0];
   
-  // Calculate next stage for progress bar (if needed in future)
-  const nextStageIndex = monster.stages.indexOf(currentStage) + 1;
-  const nextStage = monster.stages[nextStageIndex];
-
   const sizeClasses = {
     sm: 'text-4xl w-12 h-12',
     md: 'text-6xl w-20 h-20',
