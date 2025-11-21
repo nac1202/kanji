@@ -2,9 +2,6 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { GRADE_1_KANJI } from "../constants";
 import { QuizQuestion } from "../types";
 
-// Initialize Gemini Client
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 const SYSTEM_INSTRUCTION = `
 あなたは日本の小学校1年生の先生です。
 1年生で習う漢字を使った、読み方を問うクイズを作成してください。
@@ -14,6 +11,9 @@ const SYSTEM_INSTRUCTION = `
 export const generateQuizQuestion = async (
   usedKanji: string[] = []
 ): Promise<QuizQuestion> => {
+  // Initialize Gemini Client lazily to prevent startup crash if API key is missing
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
   // Pick a random kanji that hasn't been used recently if possible, otherwise random
   let availableKanji = GRADE_1_KANJI.filter((k) => !usedKanji.includes(k));
   if (availableKanji.length === 0) availableKanji = GRADE_1_KANJI;

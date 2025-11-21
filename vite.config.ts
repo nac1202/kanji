@@ -12,7 +12,8 @@ export default defineConfig(({ mode }) => {
     define: {
       // By default, Vite doesn't include process.env.
       // We define it here to support `process.env.API_KEY` used in the code.
-      'process.env.API_KEY': JSON.stringify(env.API_KEY)
+      // Fallback to empty string to prevent build errors if env is missing
+      'process.env.API_KEY': JSON.stringify(env.API_KEY || "")
     }
   }
 })
